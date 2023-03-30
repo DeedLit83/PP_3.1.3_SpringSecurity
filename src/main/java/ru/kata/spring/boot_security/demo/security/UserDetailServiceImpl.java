@@ -29,7 +29,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         User user = userService.getUserByLogin(login);
-        if(user == null){
+        if (user == null) {
             throw new UsernameNotFoundException(String.format("User: %s not found.", login));
         }
         return new org.springframework.security.core.userdetails.User(user.getLogin(),
