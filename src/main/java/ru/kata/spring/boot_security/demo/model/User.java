@@ -4,7 +4,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
 import java.util.Collection;
 import java.util.Set;
 
@@ -16,31 +15,23 @@ public class User implements UserDetails {
     private Long id;
 
     @Column(name = "name", nullable = false, length = 50)
-    @NotEmpty(message = "Firstname can\'t be empty")
     private String name;
 
     @Column(name = "surname", nullable = false, length = 50)
-    @NotEmpty(message = "Secondname can\'t be empty")
     private String surName;
 
     @Column(name = "age", nullable = false)
-    @Min(value = 0, message = "Age should be >= 0")
-    @Max(value = 127, message = "Age should be < 128")
     private byte age;
 
-    @Email(message = "Input valid e-mail")
     @Column(name = "email", nullable = false, length = 100)
     private String email;
 
-    @Size(min = 2, max = 20, message = "Login should be between 2 and 20 latin characters")
     @Column(name = "login", nullable = false, unique = true, length = 20)
     private String login;
 
-    @NotEmpty(message = "Password can\'t be empty")
     @Column(name = "password", nullable = false, length = 100)
     private String password;
 
-    @Column(name = "role_id")
     @ManyToMany
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "id"),

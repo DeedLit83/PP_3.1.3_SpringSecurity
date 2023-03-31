@@ -48,25 +48,15 @@ public class AdminController {
 
     @GetMapping("/admin/view/new")
     public String newPerson(Model model) {
-        List<Role> options = roleService.getAllRoles();
-        model.addAttribute("options", options);
+        List<Role> allRoles = roleService.getAllRoles();
+        model.addAttribute("roles", allRoles);
         model.addAttribute("user", new User());
         return "new";
     }
 
     @PostMapping("/admin/view")
-    public String create(@ModelAttribute("user")
-                         @Valid User user,
-                         BindingResult bindingResult,
+    public String create(@ModelAttribute("user") User user,
                          @RequestParam("roleList") ArrayList<Long> roles) {
-        if (bindingResult.hasErrors()) {
-            return "new";
-        }
-        if (userService.getUserByLogin(user.getLogin()) != null) {
-            bindingResult.addError(new FieldError("login", "login",
-                        String.format("User with login: %s exists", user.getLogin())));
-            return "new";
-        }
         user.setRoles(roleService.getAnyRoleById(roles));
         userService.saveUser(user);
         return "redirect:/admin/view";
@@ -74,21 +64,15 @@ public class AdminController {
 
     @GetMapping("/admin/view/{id}/edit")
     public String edit(Model model, @PathVariable("id") Long id) {
-        List<Role> options = roleService.getAllRoles();
-        model.addAttribute("options", options);
+        List<Role> allRoles = roleService.getAllRoles();
+        model.addAttribute("roles", allRoles);
         model.addAttribute("user", userService.getUserById(id));
         return "edit";
     }
 
     @PatchMapping("/admin/view/{id}")
-    public String update(Model model,
-                         @ModelAttribute("user")
-                         @Valid User user,
-                         BindingResult bindingResult,
+    public String update(@ModelAttribute("user") User user,
                          @RequestParam("roleList") ArrayList<Long> roles) {
-        if (bindingResult.hasErrors()) {
-            return "edit";
-        }
         user.setRoles(roleService.getAnyRoleById(roles));
         userService.updateUser(user);
         return "redirect:/admin/view";

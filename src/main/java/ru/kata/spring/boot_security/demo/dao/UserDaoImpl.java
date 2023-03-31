@@ -1,12 +1,13 @@
 package ru.kata.spring.boot_security.demo.dao;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.TransactionException;
+import org.springframework.transaction.UnexpectedRollbackException;
 import ru.kata.spring.boot_security.demo.model.User;
 
+import javax.persistence.*;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Repository
@@ -45,10 +46,15 @@ public class UserDaoImpl implements UserDao{
 
     @Override
     public User getUserByLogin(String userName) {
-        TypedQuery<User> q = (entityManager.createQuery("SELECT u FROM User u " +
-                "JOIN FETCH u.roles WHERE u.login = :username", User.class));
-        q.setParameter("username",userName);
-        return q.getResultList().stream().findFirst().orElse(null);
+        User user = null;
+        try {
+            TypedQuery<User> q = (entityManager.createQuery("SELECT u FROM User u " +
+                    "JOIN FETCH u.roles WHERE u.login = :username", User.class));
+            q.setParameter("username", userName);
+            user = q.getSingleResult();
+        } catch (NoResultException e) {
+        }
+        return user;
     }
 }
 
