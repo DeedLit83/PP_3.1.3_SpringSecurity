@@ -1,9 +1,6 @@
 package ru.kata.spring.boot_security.demo.dao;
 
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.TransactionException;
-import org.springframework.transaction.UnexpectedRollbackException;
 import ru.kata.spring.boot_security.demo.model.User;
 
 import javax.persistence.*;
