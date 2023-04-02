@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
+@RequestMapping("/admin")
 public class AdminController {
 
     private final UserService userService;
@@ -25,33 +27,33 @@ public class AdminController {
         this.roleService = roleService;
     }
 
-    @GetMapping("/admin")
+    @GetMapping
     public String getAdminPage(Model model, Principal principal) {
         model.addAttribute("user", userService.getUserByLogin(principal.getName()));
-        return "user";
+        return "user/user";
     }
 
-    @GetMapping("/admin/view")
+    @GetMapping("/view")
     public String getManagedAdminPage(Model model) {
         model.addAttribute("users", userService.getAllUsers());
-        return "admin";
+        return "admin/admin";
     }
 
-    @GetMapping("/admin/view/{id}")
+    @GetMapping("/view/{id}")
     public String show(@PathVariable("id") Long id, Model model) {
         model.addAttribute("user", userService.getUserById(id));
-        return "user";
+        return "user/user";
     }
 
-    @GetMapping("/admin/view/new")
+    @GetMapping("/view/new")
     public String newPerson(Model model) {
         List<Role> allRoles = roleService.getAllRoles();
         model.addAttribute("roles", allRoles);
         model.addAttribute("user", new User());
-        return "new";
+        return "admin/new";
     }
 
-    @PostMapping("/admin/view")
+    @PostMapping("/view")
     public String create(@ModelAttribute("user") User user,
                          @RequestParam("roleList") ArrayList<Long> roles) {
         user.setRoles(roleService.getAnyRoleById(roles));
@@ -59,15 +61,15 @@ public class AdminController {
         return "redirect:/admin/view";
     }
 
-    @GetMapping("/admin/view/{id}/edit")
+    @GetMapping("/view/{id}/edit")
     public String edit(Model model, @PathVariable("id") Long id) {
         List<Role> allRoles = roleService.getAllRoles();
         model.addAttribute("roles", allRoles);
         model.addAttribute("user", userService.getUserById(id));
-        return "edit";
+        return "admin/edit";
     }
 
-    @PatchMapping("/admin/view/{id}")
+    @PatchMapping("/view/{id}")
     public String update(@ModelAttribute("user") User user,
                          @RequestParam("roleList") ArrayList<Long> roles) {
         user.setRoles(roleService.getAnyRoleById(roles));
@@ -75,7 +77,7 @@ public class AdminController {
         return "redirect:/admin/view";
     }
 
-    @DeleteMapping("/admin/view/{id}")
+    @DeleteMapping("/view/{id}")
     public String delete(@PathVariable("id") Long id) {
         userService.removeUserById(id);
         return "redirect:/admin/view";
